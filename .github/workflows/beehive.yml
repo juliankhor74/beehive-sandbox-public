@@ -1,0 +1,36 @@
+name: BEEHIVE_TEST_A_FLASH
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hello_beehive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Execute Deterministic Task
+        run: |
+          echo "Task ID: BEEHIVE-TEST-A-01-20261114"
+          echo -n "Hello Julian! The Beehive loop is working." > hello-beehive.txt
+          
+      - name: Verify Bytes
+        run: |
+          echo "--- File Content ---"
+          cat hello-beehive.txt
+          echo ""
+          echo "--- SHA-256 ---"
+          sha256sum hello-beehive.txt
+
+      - name: Push Evidence to Git
+        run: |
+          git config --global user.name "DeepSeek Flash Agent"
+          git config --global user.email "flash@la.local"
+          git checkout -b beehive-test-a-01/result
+          git add hello-beehive.txt
+          git commit -m "BEEHIVE-TEST-A-01: PASS. Executed by DeepSeek Flash."
+          git push origin beehive-test-a-01/result
